@@ -3,7 +3,7 @@ Sentiment analysis of tragedy dataset using tidytext and [French Expanded Emotio
 
 There are many ways Sentiment analysis can be done but here I have primarily used tidytext package of R to calculate the total positive and negative words used in each text document.
 
-The general idea is to compare the words from standard lexicon(like FEEL) to evaluate the characteristics of each word and summing them up accordingly.Sentiment is often framed as a binary distinction (positive vs. negative), but it can also be a more fine-grained, like identifying the specific emotion an author is expressing (like fear, joy or anger).
+The general idea is to compare the words from standard lexicon(like FEEL) to evaluate the characteristics of each word and summing them up accordingly. Sentiment is often framed as a binary distinction (positive vs. negative), but it can also be a more fine-grained, like identifying the specific emotion an author is expressing (like fear, joy or anger).
 The code creates a data frame at the end which have the polarity and count for each type of word. Many positive words and few negative words indicates positive sentiment (Polarity), while many negative words and few positive words indicates negative sentiment(Polarity).
 
 ### About Dataset
