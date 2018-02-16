@@ -1,0 +1,141 @@
+---
+title: "Sentiment Analysis of [ftragedy](https://www.kaggle.com/sharkcpn/french-tragedies/data)"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
+---
+
+##by NISHCHAY CHAWLA
+
+
+========================================================
+
+
+##Introduction
+
+
+###What is sentiment analysis?
+
+Sentiment analysis is the computational task of automatically determining what feelings a writer is expressing in text. Sentiment is often framed as a binary distinction (positive vs. negative), but it can also be a more fine-grained, like identifying the specific emotion an author is expressing (like fear, joy or anger).
+
+###How is it done?
+
+1. Create or find a list of words associated with strongly positive or negative sentiment(lexicon). Here French Expanded Emotion Lexicon ([FEEL](http://advanse.lirmm.fr/feel.php)) was used.
+2. Count the number of positive and negative words in the text using lexicon.
+3. Analyze the mix of positive to negative words. Many positive words and few negative words indicates positive sentiment (Polarity), while many negative words and few positive words indicates negative sentiment(Polarity).
+ 
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+library(tidyverse)
+library(tidytext)
+library(tm)
+```
+
+
+```{r, echo=FALSE,message=FALSE, warning=FALSE}
+# Load the files from downloaded folder
+#Dataset available at https://www.kaggle.com/sharkcpn/french-tragedies
+files <- list.files('~/Desktop/Senti_analysis/ftragedy')
+
+#read lexicon
+FEEL_lex <- read_csv2("http://advanse.lirmm.fr/FEEL.csv")
+```
+
+
+
+### Explanation
+
+```{r}
+#read the file
+test1 <- read_file(paste0('~/Desktop/Senti_analysis/ftragedy/',files[1]), locale = locale('fr'))
+
+#some text processing
+test1 <- stripWhitespace(test1)
+
+test_df <- data_frame(text = test1) %>% unnest_tokens(word, text)
+
+test_clean_df <- test_df %>% filter(!word %in% stopwords('french'))
+
+#Comparing with lexicon to get positive, negative and other emotions in text
+test_feel_df <- inner_join(test_clean_df, FEEL_lex, by = 'word')
+
+sum(test_feel_df['polarity']=='positive')
+sum(test_feel_df['polarity']=='negative')
+sum(test_feel_df$joy)
+
+```
+
+
+```{r}
+# Function to automate the above task
+get_polarity_and_sentiments <- function(file){
+  file_name <- paste0('~/Desktop/Senti_analysis/ftragedy/',file)
+  file_name <- trimws(file_name)
+  file_text <- read_file(file_name, locale = locale('fr'))
+  
+  clean_text <- stripWhitespace(file_text)
+  
+  tokens <- data_frame(text = clean_text) %>% unnest_tokens(word,text)
+  tokens <- tokens %>% filter(!word %in% stopwords('french'))
+  
+  
+  token_feel_frame <- inner_join(tokens, FEEL_lex, by = 'word')
+  
+  sentiments_scorecard <- data.frame(
+                      File = file,
+                      Total_Positive = sum(token_feel_frame$polarity == 'positive'),
+                      Total_Negative = sum(token_feel_frame$polarity == 'negative'),
+                      
+                      Total_Joy_Words = sum(token_feel_frame$joy),
+                      Total_Fear_Words = sum(token_feel_frame$fear),
+                      Total_Sadness_Words = sum(token_feel_frame$sadness),
+                      Total_Anger_Words = sum(token_feel_frame$anger),
+                      Total_Surprise_Words = sum(token_feel_frame$surprise),
+                      Total_Disgust_Words = sum(token_feel_frame$disgust))
+  
+  sentiments_scorecard <- sentiments_scorecard %>%
+                          mutate(Polarity = Total_Positive-Total_Negative)
+  return(sentiments_scorecard)
+}
+
+
+
+```
+
+
+
+
+```{r}
+#results same as explanation above
+get_polarity_and_sentiments(files[1])
+```
+
+
+```{r}
+polarity_and_sentiments <- data_frame()
+
+
+for(i in files){
+  polarity_and_sentiments <- rbind(polarity_and_sentiments, get_polarity_and_sentiments(i))
+}
+```
+
+```{r}
+head(polarity_and_sentiments,10)
+```
+
+
+```{r}
+#most positive
+polarity_and_sentiments %>% filter(Total_Positive == max(Total_Positive))
+
+```
+
+```{r}
+#most negative
+polarity_and_sentiments %>% filter(Total_Negative == max(Total_Negative)) 
+```
+
