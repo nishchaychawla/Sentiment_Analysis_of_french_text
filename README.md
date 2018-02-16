@@ -1,5 +1,5 @@
 # Sentiment_Analysis_of_[ftragedy](https://www.kaggle.com/sharkcpn/french-tragedies/data)
-Sentiment analysis of tragedy dataset using tidytext and [French Expanded Emotion Lexicon](http://advanse.lirmm.fr/feel.php)
+Sentiment analysis of ftragedy dataset using tidytext and [French Expanded Emotion Lexicon](http://advanse.lirmm.fr/feel.php)
 
 There are many ways Sentiment analysis can be done but here I have primarily used tidytext package of R to calculate the total positive and negative words used in each text document.
 
