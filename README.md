@@ -9,3 +9,6 @@ The code creates a data frame at the end which have the polarity and count for e
 ### About Dataset
 The data set contains 59 txt files in [zip folder](https://www.kaggle.com/sharkcpn/french-tragedies/data) in french language.
 
+### Files:
+1. Senti_analysis.Rmd : R markdown file containing complete code and explanation.
+2. Senti_analysis : PDF file knitted from Senti_analysis.Rmd
